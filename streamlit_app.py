@@ -104,7 +104,8 @@ def main():
     st.sidebar.write("### Upload CSV file")
     uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
-        detected=chardet.detect(Path(uploaded_file.name).read_bytes())
+        file=uploaded_file.getvalue()
+        detected=chardet.detect(file)
         encoding=detected['encoding']
         df = pd.read_csv(uploaded_file,encoding=encoding)
         column_name = st.sidebar.selectbox("Select URL column", df.columns)
