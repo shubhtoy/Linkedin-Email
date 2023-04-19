@@ -6,38 +6,41 @@ import base64
 
 
 def get_email_by_linkedin(linkedin_url, _type="personal"):
-    linkedin_id = linkedin_url.split("/")[-1]
-    url = "https://kendoemailapp.com/emailbylinkedin"
-    params = {
-        "apikey": "5d00b489b9ad9342d8df232a",
-        "linkedin": linkedin_id,
-        "type": _type,
-    }
-    headers = {"accept": "application/json"}
+    try:
+        linkedin_id = linkedin_url.split("/")[-1]
+        url = "https://kendoemailapp.com/emailbylinkedin"
+        params = {
+            "apikey": "5d00b489b9ad9342d8df232a",
+            "linkedin": linkedin_id,
+            "type": _type,
+        }
+        headers = {"accept": "application/json"}
 
-    response = requests.get(url, params=params, headers=headers)
+        response = requests.get(url, params=params, headers=headers)
 
-    if response.status_code == 200:
-        # print(response.json(), response.status_code)
-        if _type == "personal":
-            email = response.json()["private_email"]
-            return {"email": email, "url": linkedin_url}
-        else:
-            email = response.json()["work_email"]
-            return {"email": email, "url": linkedin_url}
-    elif response.status_code == 404 and _type == "personal":
-        # print("Private not Found, Checking Work Email:", linkedin_id)
-        result = get_email_by_linkedin(linkedin_url, _type="work")
-        if result:
-            return result
-        else:
+        if response.status_code == 200:
+            # print(response.json(), response.status_code)
+            if _type == "personal":
+                email = response.json()["private_email"]
+                return {"email": email, "url": linkedin_url}
+            else:
+                email = response.json()["work_email"]
+                return {"email": email, "url": linkedin_url}
+        elif response.status_code == 404 and _type == "personal":
+            # print("Private not Found, Checking Work Email:", linkedin_id)
+            result = get_email_by_linkedin(linkedin_url, _type="work")
+            if result:
+                return result
+            else:
+                return None
+            # params["type"] = "work"
+        elif response.status_code == 404 and _type == "work":
+            # print("Work Email Not Found:", linkedin_id)
             return None
-        # params["type"] = "work"
-    elif response.status_code == 404 and _type == "work":
-        # print("Work Email Not Found:", linkedin_id)
-        return None
-    else:
-        print(f"Request failed with status code {response.status_code}.")
+        else:
+            print(f"Request failed with status code {response.status_code}.")
+    except:
+        get_email_by_linkedin(linkedin_url, _type=_type)
 
 
 def process_url(linkedinurl):
