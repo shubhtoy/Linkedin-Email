@@ -40,7 +40,7 @@ def get_email_by_linkedin(linkedin_url, _type="personal"):
         else:
             print(f"Request failed with status code {response.status_code}.")
     except:
-        get_email_by_linkedin(linkedin_url, _type=_type)
+        return get_email_by_linkedin(linkedin_url, _type=_type)
 
 
 def process_url(linkedinurl):
