@@ -3,7 +3,8 @@ import concurrent.futures
 import pandas as pd
 import streamlit as st
 import base64
-
+import chardet
+from pathlib import Path
 
 def get_email_by_linkedin(linkedin_url, _type="personal"):
     try:
@@ -103,7 +104,9 @@ def main():
     st.sidebar.write("### Upload CSV file")
     uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file)
+        detected=chardet.detect(Path(uploaded_file.name).read_bytes())
+        encoding=detected['encoding']
+        df = pd.read_csv(uploaded_file,encoding=encoding)
         column_name = st.sidebar.selectbox("Select URL column", df.columns)
 
         # Show a "Validate Email" button and run validation when clicked
